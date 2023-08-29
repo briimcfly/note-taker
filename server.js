@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const {readFile, writeFile} = require('fs');
+const jsonNotes = require('./db/db.json')
 
 //UUID
 const { v4: uuidv4 } = require('uuid');
@@ -13,16 +14,26 @@ const app = express();
 
 //Middleware
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 
 //GET Requests for Notes
 app.get('/api/notes', (req, res) => {
-    res.status(200).json(`${req.method} request received to get notes`);
+    return res.status(200).json(jsonNotes);
 })
+
+app.get("/notes", (req, res) => {
+    res.sendFile(path.join(__dirname, './public/notes.html'));
+});
+
+  app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, './public/index.html'));
+});
 
 //PUT Requests for Notes
 app.post('/api/notes', (req, res) => {
+    
     res.status(200).json(`${req.method} request received to get notes`);
 
     //Destructure req.body
