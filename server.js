@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
-//Public SendFile
+//Route for Notes Page
 app.get("/notes", (req, res) => {
     res.sendFile(path.join(__dirname, 'public/notes.html'));
 });
@@ -35,7 +35,7 @@ app.post('/api/notes', (req, res) => {
         id: uuidv4()
     }
 
-    //Obtain existing Notes
+    //Read DB
     readFile('db/db.json', 'utf8', (err, data) => {
 
         //Error Handling
@@ -48,7 +48,7 @@ app.post('/api/notes', (req, res) => {
         // Add a new Note 
         parsedNotes.push(newNote);
         
-        // Write updated Notes back to File with 4 spaces
+        // Write updated Notes back to DB
         writeFile('db/db.json', JSON.stringify(parsedNotes), (err) => {
 
             //Error Handling
@@ -64,17 +64,53 @@ app.post('/api/notes', (req, res) => {
 
 //GET Notes
 app.get('/api/notes', (req, res) => {
+
+    //Read DB
     readFile('db/db.json', 'utf8', (err, data) => {
 
         //Error Handling
         if (err) {
             console.error(err);
         }
-        
+
         //Send the Data
         res.send(data);
     });
 });
+
+
+//DELETE Notes
+app.delete('/api/notes/:id', (req,res) => {
+
+    //Note Selected for Deletion
+    const noteID = req.params.id;
+
+    //Read DB
+    readFile('db/db.json', 'utf-8', (err,data) => {
+
+        //Error Handling
+        if (err) {
+            console.log(err);
+        }
+        // Convert JSON
+        const parsedNotes = JSON.parse(data);
+        
+        //Converted JSON filtering out the Deleted Note
+        const updatedNotes = parsedNotes.filter(note => note.id !== noteID);
+
+        //Rewrite the File 
+        writeFile('db/db.json', JSON.stringify(updatedNotes), (err) => {
+
+            //Error Handling
+            if (err) {
+                console.log(err);
+            }
+
+            //Send updated Notes
+            res.send(updatedNotes);
+        })
+    })
+})
 
 //Listen 
 app.listen(port, () => {
