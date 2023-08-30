@@ -7,7 +7,7 @@ const {readFile, writeFile} = require('fs');
 const { v4: uuidv4 } = require('uuid');
 
 //Port
-const port = 3001;
+const PORT = process.env.PORT || 3001;
 
 //New Express App
 const app = express();
@@ -20,6 +20,11 @@ app.use(express.static('public'));
 //Route for Notes Page
 app.get("/notes", (req, res) => {
     res.sendFile(path.join(__dirname, 'public/notes.html'));
+});
+
+//Root Route
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
 //POST New Note
@@ -121,6 +126,6 @@ app.delete('/api/notes/:id', (req,res) => {
 })
 
 //Listen 
-app.listen(port, () => {
-    console.log(`Server Running at http://localhost:${port}`)
+app.listen(PORT, () => {
+    console.log(`Server Running at http://localhost:${PORT}`)
 })
