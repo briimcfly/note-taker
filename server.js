@@ -22,11 +22,6 @@ app.get("/notes", (req, res) => {
     res.sendFile(path.join(__dirname, 'public/notes.html'));
 });
 
-//Root Route
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/index.html'));
-});
-
 //POST New Note
 app.post('/api/notes', (req, res) => {
 
@@ -124,6 +119,11 @@ app.delete('/api/notes/:id', (req,res) => {
         })
     })
 })
+
+//Root Route
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/index.html'));
+});
 
 //Listen 
 app.listen(PORT, () => {
